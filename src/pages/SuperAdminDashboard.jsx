@@ -37,7 +37,7 @@ const SuperAdminDashboard = () => {
   const handleRoleChange = async (userId, newRole) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/users/${userId}`,
+        `${API}/admin/users/${userId}`,
         { role: newRole },
         config
       );
