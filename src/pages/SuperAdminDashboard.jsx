@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import MobileFooter from "../components/MobileFooter";
+
 const API = import.meta.env.VITE_API_URL;
 
 const SuperAdminDashboard = () => {
@@ -144,6 +146,7 @@ const SuperAdminDashboard = () => {
           </tbody>
         </table>
       </div>
+      <MobileFooter/>
     </div>
   );
 };

@@ -2,17 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
+
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // ✅ Use Render API URL
-  const backendUrl = "https://mybackend-8sod.onrender.com/api";
-
   const fetchProducts = () => {
     axios
-      .get(`${backendUrl}/products/my/products`, {
+      .get(`${API}/products/my/products`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setProducts(res.data))
@@ -26,7 +25,7 @@ const MyProducts = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`${backendUrl}/api/products/${id}`, {
+      await axios.delete(`${API}/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchProducts(); // Refresh list
@@ -43,12 +42,13 @@ const MyProducts = () => {
         {products.map((product) => (
           <div className="col-md-4 mb-3" key={product._id}>
             <div className="card p-2 h-100">
-              <img
-                src={
-                  product.image.startsWith("http")
-                    ? product.image
-                    : `${backendUrl}${product.image}`
-                }
+               <img
+         
+          src={
+            product.image?.startsWith("http")
+              ? product.image
+              : `${backendUrl}${product.image}`
+          }
                 alt={product.name}
                 className="img-fluid mb-2"
                 style={{ height: "200px", objectFit: "cover", width: "100%" }}
@@ -76,6 +76,7 @@ const MyProducts = () => {
       </div>
     </div>
   );
+
 };
 
 export default MyProducts;

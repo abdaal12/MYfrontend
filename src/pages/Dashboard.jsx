@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MyProducts from "../components/MyProducts";
 import AddProduct from "../components/AddProduct";
 import OrdersList from "../components/OrdersList";
+import MobileFooter from "../components/MobileFooter";
 
 const Dashboard = () => {
   const [section, setSection] = useState("products");
@@ -19,6 +20,7 @@ const Dashboard = () => {
       {section === "products" && <MyProducts />}
       {section === "add" && <AddProduct />}
       {section === "orders" && <OrdersList />}
+      <MobileFooter/>
     </div>
   );
 };

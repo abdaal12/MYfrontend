@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import MobileFooter from "../components/MobileFooter";
 
-const API = import.meta.env.VITE_API_URL;
+const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -41,13 +42,13 @@ const ProductDetail = () => {
       <h2 className="text-center mb-4">{product.name}</h2>
       <div className="row">
         <div className="col-md-6 text-center">
-          <img
-            className="img-fluid rounded shadow"
-            src={
-              product.image?.startsWith("http")
-                ? product.image
-                : `${API}${product.image}`
-            }
+           <img
+          className="card-img-top"
+          src={
+            product.image?.startsWith("http")
+              ? product.image
+              : `${backendUrl}${product.image}`
+          }
             alt={product.name}
             style={{ maxHeight: "400px", objectFit: "contain" }}
           />
@@ -68,6 +69,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+      <MobileFooter/>
     </div>
   );
 };
