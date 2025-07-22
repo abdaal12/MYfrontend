@@ -2,18 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const backendUrl = "http://localhost:5000"; // ✅ Define backend URL here
+const API = import.meta.env.VITE_API_URL;
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${backendUrl}/api/products/${id}`);
+        const res = await axios.get(`${API}/products/${id}`);
         setProduct(res.data);
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -30,8 +29,7 @@ const ProductDetail = () => {
   };
 
   const handleContactSeller = () => {
-    alert(`Contacting seller: ${product.sellerEmail || "not provided"}`);
-    // Example: window.location.href = `mailto:${product.sellerEmail}`;
+    alert(`Contacting seller: ${product?.sellerEmail || "not provided"}`);
   };
 
   if (!product) {
@@ -48,7 +46,7 @@ const ProductDetail = () => {
             src={
               product.image?.startsWith("http")
                 ? product.image
-                : `${backendUrl}${product.image}`
+                : `${API}${product.image}`
             }
             alt={product.name}
             style={{ maxHeight: "400px", objectFit: "contain" }}

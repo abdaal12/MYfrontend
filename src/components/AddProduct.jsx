@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const categories = ["Electronics", "Food", "Shoes", "Clothing", "Beauty", "Books"];
 
@@ -62,7 +63,7 @@ const AddProduct = () => {
       Object.entries(form).forEach(([key, value]) => formData.append(key, value));
       formData.append("image", imageFile);
 
-      await axios.post("http://localhost:5000/api/products", formData, {
+      await axios.post(`${API}/products`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

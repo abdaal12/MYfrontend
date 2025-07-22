@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const Signup = ({ embedded }) => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -13,7 +14,7 @@ const Signup = ({ embedded }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/users", form);
+      const res = await axios.post(`${API}/users`, form);
 
       localStorage.setItem("token", res.data.token);
       navigate(from || "/", { replace: true }); // ✅ Redirect to original page or home

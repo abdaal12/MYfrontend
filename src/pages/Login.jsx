@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const Login = ({ embedded }) => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Login = ({ embedded }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/users/login", {
+      const res = await axios.post(`${API}/users/login`, {
         email,
         password,
       });

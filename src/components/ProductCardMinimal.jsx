@@ -1,19 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const backendUrl = "http://localhost:5000";
+const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
 
 const ProductCardMinimal = ({ product }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/product/${product._id}`); // Make sure _id exists
+    navigate(`/product/${product._id}`);
   };
 
   return (
     <div className="col-6 col-md-3 mb-4">
       <div
-        className="card h-100 shadow-sm cursor-pointer"
+        className="card h-100 shadow-sm"
         onClick={handleClick}
         style={{ cursor: "pointer" }}
       >
@@ -30,7 +30,6 @@ const ProductCardMinimal = ({ product }) => {
         <div className="card-body text-center">
           <h6 className="card-title text-truncate">{product.name}</h6>
           <p className="mb-2 fw-bold text-success">₹{product.price}</p>
-
           <div>
             {"★".repeat(4)}
             <span className="text-muted">★</span>

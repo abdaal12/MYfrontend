@@ -7,11 +7,12 @@ const MyProducts = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  const backendUrl = "http://localhost:5000";
+  // ✅ Use Render API URL
+  const backendUrl = "https://mybackend-8sod.onrender.com/api";
 
   const fetchProducts = () => {
     axios
-      .get(`${backendUrl}/api/products/my/products`, {
+      .get(`${backendUrl}/products/my/products`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setProducts(res.data))
@@ -62,13 +63,12 @@ const MyProducts = () => {
                 >
                   Delete
                 </button>
-               <button
-                   className="btn btn-sm btn-warning"
-               onClick={() => navigate(`/update-product/${product._id}`)}
->
-             Update
-             </button>
-
+                <button
+                  className="btn btn-sm btn-warning"
+                  onClick={() => navigate(`/update-product/${product._id}`)}
+                >
+                  Update
+                </button>
               </div>
             </div>
           </div>

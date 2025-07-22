@@ -7,7 +7,8 @@ const SearchResults = () => {
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get("keyword");
 
-  const endpoint = `http://localhost:5000/api/products/search?keyword=${keyword}`;
+  const backendUrl = import.meta.env.VITE_API_URLL;
+  const endpoint = `${backendUrl}/products/search?keyword=${keyword}`;
 
   return (
     <div>

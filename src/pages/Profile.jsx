@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL;
+
 const Profile = () => {
   const [user, setUser] = useState({});
   const [editing, setEditing] = useState(false);
@@ -12,12 +14,12 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/profile", {
+        const res = await axios.get(`${API}/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
- console.log("Profile response:", res.data);
+
         setUser(res.data);
         setFormData({
           name: res.data.name || "",
@@ -25,10 +27,8 @@ const Profile = () => {
           contact: res.data.contact || "",
           address: res.data.address || "",
         });
-
-        console.log("Fetched user:", res.data); // DEBUG
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching profile:", err);
       }
     };
 
@@ -38,7 +38,7 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       const res = await axios.put(
-        "/api/users/profile",
+        `${API}/users/profile`,
         { ...formData },
         {
           headers: {
@@ -49,7 +49,7 @@ const Profile = () => {
       setUser(res.data);
       setEditing(false);
     } catch (err) {
-      console.error(err);
+      console.error("Error updating profile:", err);
     }
   };
 
@@ -92,7 +92,7 @@ const Profile = () => {
           )}
         </div>
 
-        {/* Contact (Only editable by simple user) */}
+        {/* Contact */}
         <div>
           <label>Contact:</label>
           {editing ? (
@@ -107,7 +107,7 @@ const Profile = () => {
           )}
         </div>
 
-        {/* Address (Only editable by simple user) */}
+        {/* Address */}
         <div>
           <label>Address:</label>
           {editing ? (
@@ -121,7 +121,7 @@ const Profile = () => {
           )}
         </div>
 
-        {/* BUTTONS */}
+        {/* Buttons */}
         <div className="d-flex gap-3 flex-wrap mt-3">
           {editing ? (
             <>
@@ -142,23 +142,14 @@ const Profile = () => {
                 Your Orders
               </button>
 
-              {/* Admin/Vendor Dashboard (Not for superadmin) */}
-              {(user.role === "admin" || user.role === "vendor") &&
-                user.role !== "superadmin" && (
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => navigate("/dashboard")}
-                  >
-                    Go to Dashboard
-                  </button>
+              {(user.role === "admin" || user.role === "vendor") && user.role !== "superadmin" && (
+                <button className="btn btn-secondary" onClick={() => navigate("/dashboard")}>
+                  Go to Dashboard
+                </button>
               )}
 
-              {/* Super Admin Dashboard */}
               {user.role === "superadmin" && (
-                <button
-                  className="btn btn-dark"
-                  onClick={() => navigate("/superadmin/dashboard")}
-                >
+                <button className="btn btn-dark" onClick={() => navigate("/superadmin/dashboard")}>
                   Super Admin Dashboard
                 </button>
               )}

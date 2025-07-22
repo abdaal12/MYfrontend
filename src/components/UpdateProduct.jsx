@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL;
+
 const UpdateProduct = () => {
-  const { id } = useParams(); // Product ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -19,27 +21,31 @@ const UpdateProduct = () => {
 
   const [previewImage, setPreviewImage] = useState("");
 
-  // Fetch existing product
- useEffect(() => {
-  axios
-    .get(`http://localhost:5000/api/products/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((res) => {
-      setForm({
-        name: res.data.name,
-        description: res.data.description,
-        price: res.data.price,
-        brand: res.data.brand,
-        category: res.data.category,
-        countInStock: res.data.countInStock,
-        image: res.data.image,
-      });
-      setPreviewImage(res.data.image);
-    })
-    .catch((err) => console.error("Fetch product error:", err));
-}, [id]);
+  // Fetch product on mount
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(`${API}/products/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setForm({
+          name: res.data.name || "",
+          description: res.data.description || "",
+          price: res.data.price || "",
+          brand: res.data.brand || "",
+          category: res.data.category || "",
+          countInStock: res.data.countInStock || "",
+          image: res.data.image || "",
+        });
+        setPreviewImage(res.data.image || "");
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        alert("Failed to fetch product details");
+      }
+    };
 
+    fetchProduct();
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -59,14 +65,15 @@ const UpdateProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.put(`http://localhost:5000/api/products/${id}`, form, {
+      await axios.put(`${API}/products/${id}`, form, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Product updated successfully");
-      navigate("/dashboard"); // or any route you want
+      navigate("/dashboard");
     } catch (err) {
-      console.error("Update failed:", err);
+      console.error("Update failed:", err.response?.data || err.message);
       alert("Failed to update product");
     }
   };
@@ -149,9 +156,10 @@ const UpdateProduct = () => {
 
         {previewImage && (
           <img
-            src={previewImage}
+            src={previewImage.startsWith("http") ? previewImage : `${API}${previewImage}`}
             alt="Preview"
-            style={{ maxWidth: "150px", marginBottom: "15px" }}
+            className="img-thumbnail mb-3"
+            style={{ maxWidth: "150px" }}
           />
         )}
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const SuperAdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -20,9 +21,9 @@ const SuperAdminDashboard = () => {
   const fetchAllData = async () => {
     try {
       const [userRes, productRes, orderRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/admin/users", config),
-        axios.get("http://localhost:5000/api/admin/products", config),
-        axios.get("http://localhost:5000/api/admin/orders", config),
+        axios.get(`${API}/admin/users`, config),
+        axios.get(`${API}/admin/products`, config),
+        axios.get(`${API}/admin/orders`, config),
       ]);
 
       setUsers(userRes.data);
