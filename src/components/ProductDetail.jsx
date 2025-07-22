@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import MobileFooter from "../components/MobileFooter";
 
@@ -8,7 +8,6 @@ const backendUrl = API.replace("/api", "");
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
@@ -39,38 +38,51 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">{product.name}</h2>
-      <div className="row">
-        <div className="col-md-6 text-center">
-           <img
-          className="card-img-top"
+    <div className="container-fluid px-2 px-md-5 pb-5">
+      {/* Image Section */}
+      <div className="text-center bg-white shadow-sm">
+        <img
+          className="img-fluid w-100"
           src={
             product.image?.startsWith("http")
               ? product.image
               : `${backendUrl}${product.image}`
           }
-            alt={product.name}
-            style={{ maxHeight: "400px", objectFit: "contain" }}
-          />
-        </div>
-        <div className="col-md-6">
-          <h4>Price: ₹{product.price}</h4>
-          <p><strong>Brand:</strong> {product.brand}</p>
-          <p><strong>Category:</strong> {product.category}</p>
-          <p className="mt-3">{product.description}</p>
-
-          <div className="mt-4 d-flex gap-3">
-            <button className="btn btn-success" onClick={handleAddToCart}>
-              Add to Cart
-            </button>
-            <button className="btn btn-outline-primary" onClick={handleContactSeller}>
-              Contact Seller
-            </button>
-          </div>
-        </div>
+          alt={product.name}
+          style={{ maxHeight: "400px", objectFit: "contain" }}
+        />
       </div>
-      <MobileFooter/>
+
+      {/* Product Info */}
+      <div className="mt-3 px-2 px-md-4">
+        <h4 className="fw-semibold">{product.name}</h4>
+        <h5 className="text-success mt-2 mb-1">₹{product.price}</h5>
+        <p className="text-muted mb-1">
+          <strong>Brand:</strong> {product.brand}
+        </p>
+        <p className="text-muted mb-1">
+          <strong>Category:</strong> {product.category}
+        </p>
+        <p className="mt-3 text-dark">{product.description}</p>
+      </div>
+
+      {/* Bottom Sticky Action Buttons */}
+      <div className="position-fixed bottom-0 start-0 end-0 bg-white border-top p-3 d-flex justify-content-around z-3">
+        <button className="btn btn-success w-50 me-2" onClick={handleAddToCart}>
+          Add to Cart
+        </button>
+        <button
+          className="btn btn-outline-primary w-50"
+          onClick={handleContactSeller}
+        >
+          Contact Seller
+        </button>
+      </div>
+
+      {/* Extra Space to Avoid Overlap */}
+      <div style={{ height: "80px" }}></div>
+
+      <MobileFooter />
     </div>
   );
 };
