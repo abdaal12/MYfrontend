@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
+const API = import.meta.env.VITE_API_URL;
+const backendUrl = API.replace("/api", "");
+
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);

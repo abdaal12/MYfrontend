@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MobileFooter from "../components/MobileFooter";
 
-const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
+const API = import.meta.env.VITE_API_URL;
+const backendUrl = API.replace("/api", "");
 
 const ProductDetail = () => {
   const { id } = useParams();
