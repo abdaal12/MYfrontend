@@ -46,7 +46,7 @@ const ProductDetail = () => {
           src={
             product.image?.startsWith("http")
               ? product.image
-              : `${backendUrl}${product.image}`
+              : `${backendUrl}/uploads/${product.image}`
           }
           alt={product.name}
           style={{ maxHeight: "400px", objectFit: "contain" }}
