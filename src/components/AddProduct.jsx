@@ -44,7 +44,7 @@ const AddProduct = () => {
     try {
       const response = await axios.post(`${API}/products`, data, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
