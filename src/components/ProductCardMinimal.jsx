@@ -22,7 +22,7 @@ const ProductCardMinimal = ({ product }) => {
           src={
             product.image?.startsWith("http")
               ? product.image
-              : `${backendUrl}/uploads/${product.image}`
+              : `${backendUrl}${product.image}`
           }
           alt={product.name}
           style={{ height: "200px", objectFit: "cover" }}
