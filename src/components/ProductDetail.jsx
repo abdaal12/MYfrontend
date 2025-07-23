@@ -9,6 +9,7 @@ const backendUrl = API.replace("/api", "");
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,6 +34,13 @@ const ProductDetail = () => {
     alert(`Contacting seller: ${product?.sellerEmail || "not provided"}`);
   };
 
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `${backendUrl}${imagePath}`;
+  };
+
   if (!product) {
     return <p className="text-center mt-5">Loading product details...</p>;
   }
@@ -43,15 +51,33 @@ const ProductDetail = () => {
       <div className="text-center bg-white shadow-sm">
         <img
           className="img-fluid w-100"
-          src={
-            product.image?.startsWith("http")
-              ? product.image
-              : `${backendUrl}${product.image}`
-          }
+          src={getImageUrl(product.image)}
           alt={product.name}
-          style={{ maxHeight: "400px", objectFit: "contain" }}
+          style={{ maxHeight: "400px", objectFit: "contain", cursor: "zoom-in" }}
+          onClick={() => setShowModal(true)}
         />
       </div>
+
+      {/* Modal for Fullscreen Image */}
+      {showModal && (
+        <div
+          className="modal show fade d-block"
+          tabIndex="-1"
+          role="dialog"
+          onClick={() => setShowModal(false)}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content bg-transparent border-0">
+              <img
+                src={getImageUrl(product.image)}
+                alt={product.name}
+                className="img-fluid rounded"
+                style={{ maxHeight: "90vh", objectFit: "contain" }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Product Info */}
       <div className="mt-3 px-2 px-md-4">

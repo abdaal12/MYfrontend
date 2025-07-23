@@ -3,6 +3,8 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
+const CLOUDINARY_URL = import.meta.env.VITE_CLOUDINARY_URL; // preset endpoint
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const UpdateProduct = () => {
   const { id } = useParams();
@@ -21,13 +23,13 @@ const UpdateProduct = () => {
 
   const [previewImage, setPreviewImage] = useState("");
 
-  // Fetch product on mount
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`${API}/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setForm({
           name: res.data.name || "",
           description: res.data.description || "",
@@ -37,6 +39,7 @@ const UpdateProduct = () => {
           countInStock: res.data.countInStock || "",
           image: res.data.image || "",
         });
+
         setPreviewImage(res.data.image || "");
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -51,16 +54,23 @@ const UpdateProduct = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setForm({ ...form, image: reader.result });
-      setPreviewImage(reader.result);
-    };
-    reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    try {
+      const res = await axios.post(CLOUDINARY_URL, formData);
+      const imageUrl = res.data.secure_url;
+      setForm((prev) => ({ ...prev, image: imageUrl }));
+      setPreviewImage(imageUrl);
+    } catch (err) {
+      console.error("Cloudinary Upload Error:", err);
+      alert("Image upload failed");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -156,7 +166,7 @@ const UpdateProduct = () => {
 
         {previewImage && (
           <img
-            src={previewImage.startsWith("http") ? previewImage : `${API}${previewImage}`}
+            src={previewImage}
             alt="Preview"
             className="img-thumbnail mb-3"
             style={{ maxWidth: "150px" }}
