@@ -1,137 +1,356 @@
 import React, { useState } from "react";
+
 import axios from "axios";
 
-const AddProduct = () => {
-  const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL;
 
-  const [formData, setFormData] = useState({
-    name: "",
-    brand: "",
-    category: "",
-    description: "",
-    price: "",
-    countInStock: "",
+const categories = ["Electronics", "Food", "Shoes", "Clothing", "Beauty", "Books"];
+
+const AddProduct = () => {
+
+const [form, setForm] = useState({
+
+name: "",
+
+description: "",
+
+price: "",
+
+brand: "",
+
+category: "",
+
+countInStock: "",
+
+});
+
+const [imageFile, setImageFile] = useState(null);
+
+const [imagePreview, setImagePreview] = useState(null);
+
+const [loading, setLoading] = useState(false);
+
+const token = localStorage.getItem("token");
+
+const handleChange = (e) => {
+
+setForm({ ...form, [e.target.name]: e.target.value });
+
+};
+
+const handleImageChange = (e) => {
+
+const file = e.target.files[0];
+
+setImageFile(file);
+
+if (file) {
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => setImagePreview(reader.result);
+
+  reader.readAsDataURL(file);
+
+} else {
+
+  setImagePreview(null);
+
+}
+
+};
+
+const validateForm = () => {
+
+if (!form.name || !form.description || !form.price || !form.brand || !form.category || !form.countInStock) {
+
+  alert("Please fill all fields.");
+
+  return false;
+
+}
+
+
+
+if (parseFloat(form.price) <= 0 || parseInt(form.countInStock) < 0) {
+
+  alert("Invalid price or stock value.");
+
+  return false;
+
+}
+
+
+
+if (!imageFile) {
+
+  alert("Please upload an image.");
+
+  return false;
+
+}
+
+
+
+return true;
+
+};
+
+const handleSubmit = async (e) => {
+
+e.preventDefault();
+
+if (!validateForm()) return;
+
+
+
+setLoading(true);
+
+try {
+
+  const formData = new FormData();
+
+  Object.entries(form).forEach(([key, value]) => formData.append(key, value));
+
+  formData.append("image", imageFile);
+
+
+
+  await axios.post(`${API}/products`, formData, {
+
+    headers: {
+
+      Authorization: `Bearer ${token}`,
+
+      "Content-Type": "multipart/form-data",
+
+    },
+
   });
 
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [fullScreenImage, setFullScreenImage] = useState(null); // for modal
 
-  const token = localStorage.getItem("token");
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  alert("✅ Product added successfully!");
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
-  };
+  setForm({
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    name: "",
 
-    if (!image) {
-      alert("Please upload an image.");
-      return;
-    }
+    description: "",
 
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => data.append(key, formData[key]));
-    data.append("image", image);
+    price: "",
 
-    try {
-      const response = await axios.post(`${API}/products`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    brand: "",
 
-      alert("✅ Product created!");
-      setFormData({
-        name: "",
-        brand: "",
-        category: "",
-        description: "",
-        price: "",
-        countInStock: "",
-      });
-      setImage(null);
-      setPreview(null);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert("❌ Upload failed.");
-    }
-  };
+    category: "",
 
-  return (
-    <div className="container mt-4">
-      <h3>Add Product</h3>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="mb-2">
-          <label>Name:</label>
-          <input type="text" name="name" className="form-control" value={formData.name} onChange={handleChange} required />
-        </div>
-        <div className="mb-2">
-          <label>Brand:</label>
-          <input type="text" name="brand" className="form-control" value={formData.brand} onChange={handleChange} required />
-        </div>
-        <div className="mb-2">
-          <label>Category:</label>
-          <input type="text" name="category" className="form-control" value={formData.category} onChange={handleChange} required />
-        </div>
-        <div className="mb-2">
-          <label>Description:</label>
-          <textarea name="description" className="form-control" value={formData.description} onChange={handleChange} required />
-        </div>
-        <div className="mb-2">
-          <label>Price:</label>
-          <input type="number" name="price" className="form-control" value={formData.price} onChange={handleChange} required />
-        </div>
-        <div className="mb-2">
-          <label>Count In Stock:</label>
-          <input type="number" name="countInStock" className="form-control" value={formData.countInStock} onChange={handleChange} required />
-        </div>
-        <div className="mb-3">
-          <label>Image:</label>
-          <input type="file" className="form-control" accept="image/*" onChange={handleImageChange} required />
-        </div>
+    countInStock: "",
 
-        {preview && (
-          <div>
-            <img
-              src={preview}
-              alt="Preview"
-              onClick={() => setFullScreenImage(preview)}
-              style={{ height: "150px", cursor: "zoom-in", borderRadius: "10px" }}
-            />
-          </div>
-        )}
+  });
 
-        <button type="submit" className="btn btn-primary mt-3">Add Product</button>
-      </form>
+  setImageFile(null);
 
-      {/* Fullscreen Image Modal */}
-      {fullScreenImage && (
-        <div
-          onClick={() => setFullScreenImage(null)}
-          style={{
-            position: "fixed",
-            top: 0, left: 0,
-            width: "100vw", height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.9)",
-            display: "flex", justifyContent: "center", alignItems: "center",
-            zIndex: 9999,
-            cursor: "zoom-out"
-          }}
-        >
-          <img src={fullScreenImage} alt="Fullscreen" style={{ maxHeight: "90%", maxWidth: "90%", borderRadius: "10px" }} />
-        </div>
-      )}
+  setImagePreview(null);
+
+  window.scrollTo(0, 0); // ✅ Auto scroll up
+
+} catch (err) {
+
+  console.error(err);
+
+  alert("❌ Failed to add product");
+
+} finally {
+
+  setLoading(false);
+
+}
+
+};
+
+return (
+
+<form onSubmit={handleSubmit}>
+
+  <h4 className="mb-3">Add New Product</h4>
+
+
+
+  <input
+
+    type="text"
+
+    className="form-control mb-2"
+
+    name="name"
+
+    placeholder="Product Name"
+
+    value={form.name}
+
+    onChange={handleChange}
+
+    required
+
+  />
+
+
+
+  <textarea
+
+    className="form-control mb-2"
+
+    name="description"
+
+    placeholder="Description"
+
+    value={form.description}
+
+    onChange={handleChange}
+
+    required
+
+  />
+
+
+
+  <input
+
+    type="number"
+
+    className="form-control mb-2"
+
+    name="price"
+
+    placeholder="Price"
+
+    value={form.price}
+
+    onChange={handleChange}
+
+    min="1"
+
+    step="0.01"
+
+    required
+
+  />
+
+
+
+  <input
+
+    type="text"
+
+    className="form-control mb-2"
+
+    name="brand"
+
+    placeholder="Brand"
+
+    value={form.brand}
+
+    onChange={handleChange}
+
+    required
+
+  />
+
+
+
+  <select
+
+    className="form-select mb-2"
+
+    name="category"
+
+    value={form.category}
+
+    onChange={handleChange}
+
+    required
+
+  >
+
+    <option value="">Select Category</option>
+
+    {categories.map((cat) => (
+
+      <option key={cat} value={cat}>
+
+        {cat}
+
+      </option>
+
+    ))}
+
+  </select>
+
+
+
+  <input
+
+    type="number"
+
+    className="form-control mb-2"
+
+    name="countInStock"
+
+    placeholder="Stock Count"
+
+    value={form.countInStock}
+
+    onChange={handleChange}
+
+    min="0"
+
+    required
+
+  />
+
+
+
+  <input
+
+    type="file"
+
+    className="form-control mb-2"
+
+    accept="image/*"
+
+    onChange={handleImageChange}
+
+    required
+
+  />
+
+
+
+  {/* ✅ Preview image */}
+
+  {imagePreview && (
+
+    <div className="mb-3">
+
+      <img src={imagePreview} alt="Preview" className="img-fluid rounded shadow-sm" style={{ maxHeight: "200px" }} />
+
     </div>
-  );
+
+  )}
+
+
+
+  <button type="submit" className="btn btn-success w-100" disabled={loading}>
+
+    {loading ? "Submitting..." : "Add Product"}
+
+  </button>
+
+</form>
+
+);
+
 };
 
 export default AddProduct;
+
