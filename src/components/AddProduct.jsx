@@ -42,7 +42,7 @@ const AddProduct = () => {
     data.append("image", image);
 
     try {
-      const response = await axios.post(`${API}/products/add`, data, {
+      const response = await axios.post(`${API}/products`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
