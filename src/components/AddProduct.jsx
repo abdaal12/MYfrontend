@@ -59,19 +59,52 @@ const AddProduct = () => {
   };
 
   return (
-    <div>
-      <h2>Add Product</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" onChange={handleChange} required />
-        <input type="text" name="brand" placeholder="Brand" onChange={handleChange} required />
-        <input type="text" name="category" placeholder="Category" onChange={handleChange} required />
-        <input type="text" name="description" placeholder="Description" onChange={handleChange} required />
-        <input type="number" name="price" placeholder="Price" onChange={handleChange} required />
-        <input type="number" name="countInStock" placeholder="Stock Count" onChange={handleChange} required />
+    <div className="container mt-5">
+      <h2 className="mb-4">Add Product</h2>
+      <form onSubmit={handleSubmit} className="card p-4 shadow-sm rounded">
+        <div className="mb-3">
+          <label className="form-label">Name</label>
+          <input type="text" name="name" className="form-control" onChange={handleChange} required />
+        </div>
 
-        <input type="file" accept="image/*" onChange={handleImageChange} required />
+        <div className="mb-3">
+          <label className="form-label">Brand</label>
+          <input type="text" name="brand" className="form-control" onChange={handleChange} required />
+        </div>
 
-        <button type="submit">Add Product</button>
+        <div className="mb-3">
+          <label className="form-label">Category</label>
+          <select name="category" className="form-select" onChange={handleChange} required>
+            <option value="">Select Category</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Food">Food</option>
+            <option value="Books">Books</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          <input type="text" name="description" className="form-control" onChange={handleChange} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Price</label>
+          <input type="number" name="price" className="form-control" onChange={handleChange} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Stock Count</label>
+          <input type="number" name="countInStock" className="form-control" onChange={handleChange} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Product Image</label>
+          <input type="file" accept="image/*" className="form-control" onChange={handleImageChange} required />
+        </div>
+
+        <button type="submit" className="btn btn-primary w-100">Add Product</button>
       </form>
     </div>
   );
