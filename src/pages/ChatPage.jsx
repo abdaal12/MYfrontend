@@ -1,50 +1,64 @@
 import React, { useEffect, useState } from "react";
-import ChatWindow from "../components/ChatWindow";
-import MessageInput from "../components/MessageInput";
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import MobileFooter from "../components/MobileFooter";
+import ChatBubble from "../components/ChatBubble";
+import ChatInput from "../components/ChatInput";
 
 const API = import.meta.env.VITE_API_URL;
 
-const ChatPage = ({ receiverId }) => {
+const ChatPage = () => {
+  const { chatId } = useParams();
   const [messages, setMessages] = useState([]);
-  const [user] = useState(JSON.parse(localStorage.getItem("userInfo")));
-  
-  const fetchMessages = async () => {
-    try {
-      const { data } = await axios.get(`${API}/chat/${receiverId}`, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      setMessages(data);
-    } catch (err) {
-      console.error("Error loading messages:", err);
-    }
-  };
+  const [recipientName, setRecipientName] = useState("");
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    fetchMessages();
-  }, [receiverId]);
+    const fetchChat = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const res = await axios.get(`${API}/chat/${chatId}`, config);
+        setMessages(res.data.messages);
+        setRecipientName(res.data.participantName);
+        setUserId(res.data.currentUserId); // for detecting own message
+      } catch (error) {
+        console.error("Fetch chat error:", error);
+      }
+    };
 
-  const handleSend = async (text) => {
+    fetchChat();
+  }, [chatId]);
+
+  const handleSend = async (messageText) => {
     try {
-      const { data } = await axios.post(`${API}/chat/send`, {
-        to: receiverId,
-        message: text
-      }, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      setMessages(prev => [...prev, data]);
-    } catch (err) {
-      console.error("Message send failed", err);
+      const token = localStorage.getItem("token");
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const res = await axios.post(`${API}/chat/${chatId}/message`, {
+        content: messageText,
+      }, config);
+
+      setMessages((prev) => [...prev, res.data]);
+    } catch (error) {
+      console.error("Send message error:", error);
     }
   };
 
   return (
-    <div className="container py-4">
-      <h5>Chat with Seller</h5>
-      <ChatWindow messages={messages} userId={user._id} />
-      <MessageInput onSend={handleSend} />
-      <MobileFooter/>
+    <div className="container py-3">
+      <div className="card">
+        <div className="card-header bg-primary text-white fw-bold">
+          Chat with {recipientName}
+        </div>
+
+        <div className="card-body" style={{ height: "60vh", overflowY: "auto" }}>
+          {messages.map((msg, idx) => (
+            <ChatBubble key={idx} message={msg} isOwn={msg.sender === userId} />
+          ))}
+        </div>
+
+        <ChatInput onSend={handleSend} />
+      </div>
     </div>
   );
 };
