@@ -10,6 +10,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -23,13 +24,6 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Product added to cart!");
-  };
-
   const handleContactSeller = () => {
     alert(`Contacting seller: ${product?.sellerEmail || "not provided"}`);
   };
@@ -39,6 +33,24 @@ const ProductDetail = () => {
     return imagePath.startsWith("http")
       ? imagePath
       : `${backendUrl}${imagePath}`;
+  };
+
+  const handleLike = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.put(`${API}/products/like/${product._id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProduct({ ...product, likes: res.data.likes });
+    } catch (err) {
+      alert(err.response?.data?.message || "You can like only once.");
+    }
+  };
+
+  const handleCopyLink = () => {
+    const shareUrl = `${window.location.origin}/products/${product._id}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert("Product link copied to clipboard!");
   };
 
   if (!product) {
@@ -92,46 +104,70 @@ const ProductDetail = () => {
         <p className="mt-3 text-dark">{product.description}</p>
       </div>
 
-      {/* Bottom Sticky Action Buttons */}
- {/* Action Buttons - Like, Share, Contact Seller */}
-<div className="d-flex justify-content-around mt-4 px-2 gap-2">
-  <button
-    className="btn btn-outline-danger flex-grow-1"
-    onClick={async () => {
-      try {
-        const res = await axios.put(`${API}/products/like/${product._id}`);
-        setProduct({ ...product, likes: res.data.likes });
-      } catch (err) {
-        console.error("Like failed:", err);
-      }
-    }}
-  >
-    ❤️ Like ({product.likes || 0})
-  </button>
+      {/* Action Buttons - Like, Share, Contact */}
+      <div className="d-flex justify-content-around mt-4 px-2 gap-2">
+        <button className="btn btn-outline-danger flex-grow-1" onClick={handleLike}>
+          ❤️ Like ({product.likes || 0})
+        </button>
 
-  <button
-    className="btn btn-outline-secondary flex-grow-1"
-    onClick={() => {
-      const shareUrl = `${window.location.origin}/product/${product._id}`;
-      navigator.clipboard.writeText(shareUrl);
-      alert("Product link copied to clipboard!");
-    }}
-  >
-    🔗 Share
-  </button>
+        <button
+          className="btn btn-outline-secondary flex-grow-1"
+          onClick={() => setShowShareOptions(!showShareOptions)}
+        >
+          🔗 Share
+        </button>
 
-  <button
-    className="btn btn-outline-primary flex-grow-1"
-    onClick={handleContactSeller}
-  >
-    📞 Contact
-  </button>
-</div>
+        <button
+          className="btn btn-outline-primary flex-grow-1"
+          onClick={handleContactSeller}
+        >
+          📞 Contact
+        </button>
+      </div>
 
+      {/* Social Share Options */}
+      {showShareOptions && (
+        <div className="mt-3 p-3 border rounded bg-light text-center">
+          <h6 className="mb-3">📱 Share to:</h6>
+          <div className="d-flex justify-content-around flex-wrap gap-2">
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                `${product.name} - ${window.location.origin}/products/${product._id}`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-success"
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                `${window.location.origin}/products/${product._id}`
+              )}&text=${encodeURIComponent(product.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-info text-white"
+            >
+              Twitter
+            </a>
+            <a
+              href={`https://t.me/share/url?url=${encodeURIComponent(
+                `${window.location.origin}/products/${product._id}`
+              )}&text=${encodeURIComponent(product.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+            >
+              Telegram
+            </a>
+            <button className="btn btn-dark" onClick={handleCopyLink}>
+              📋 Copy Link
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* Extra Space to Avoid Overlap */}
-      <div style={{ height: "80px" }}></div>
-
+      <div style={{ height: "60px" }}></div>
       <MobileFooter />
     </div>
   );
