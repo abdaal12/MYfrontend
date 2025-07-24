@@ -132,7 +132,7 @@ const ProductDetail = () => {
           <div className="d-flex justify-content-around flex-wrap gap-2">
             <a
               href={`https://wa.me/?text=${encodeURIComponent(
-                `${product.name} - ${window.location.origin}/products/${product._id}`
+                `${product.name} - ${window.location.origin}/product/${product._id}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -142,7 +142,7 @@ const ProductDetail = () => {
             </a>
             <a
               href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                `${window.location.origin}/products/${product._id}`
+                `${window.location.origin}/product/${product._id}`
               )}&text=${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -152,7 +152,7 @@ const ProductDetail = () => {
             </a>
             <a
               href={`https://t.me/share/url?url=${encodeURIComponent(
-                `${window.location.origin}/products/${product._id}`
+                `${window.location.origin}/product/${product._id}`
               )}&text=${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
