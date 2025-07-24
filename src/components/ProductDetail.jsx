@@ -93,17 +93,31 @@ const ProductDetail = () => {
       </div>
 
       {/* Bottom Sticky Action Buttons */}
-      <div className="position-fixed bottom-0 start-0 end-0 bg-white border-top p-3 d-flex justify-content-around z-3">
-        <button className="btn btn-success w-50 me-2" onClick={handleAddToCart}>
-          Add to Cart
-        </button>
-        <button
-          className="btn btn-outline-primary w-50"
-          onClick={handleContactSeller}
-        >
-          Contact Seller
-        </button>
-      </div>
+     {/* Like and Share Buttons */}
+<div className="position-fixed bottom-0 start-0 end-0 bg-white border-top p-3 d-flex justify-content-around z-3">
+  <button className="btn btn-light w-25 d-flex align-items-center justify-content-center" onClick={async () => {
+    try {
+      const res = await axios.put(`${API}/products/like/${product._id}`);
+      setProduct({ ...product, likes: res.data.likes });
+    } catch (err) {
+      console.error("Like failed:", err);
+    }
+  }}>
+    ❤️ {product.likes || 0}
+  </button>
+
+  <button className="btn btn-light w-25 d-flex align-items-center justify-content-center" onClick={() => {
+    const shareUrl = `${window.location.origin}/product/${product._id}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert("Product link copied to clipboard!");
+  }}>
+    🔗 Share
+  </button>
+
+  <button className="btn btn-outline-primary w-50" onClick={handleContactSeller}>
+    Contact Seller
+  </button>
+</div>
 
       {/* Extra Space to Avoid Overlap */}
       <div style={{ height: "80px" }}></div>
