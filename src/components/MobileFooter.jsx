@@ -21,10 +21,10 @@ const MobileFooter = () => {
           <div style={{ fontSize: "0.75rem" }}>Alerts</div>
         </Link>
 
-        <Link to="/food" className="text-dark text-center">
-          <i className="bi bi-egg-fried fs-4"></i>
-          <div style={{ fontSize: "0.75rem" }}>Food</div>
-        </Link>
+         <Link to="/chat" className="text-dark text-center">
+    <i className="bi bi-chat-dots fs-4"></i> {/* Bootstrap Chat Icon */}
+    <div style={{ fontSize: "0.75rem" }}>Chat</div>
+  </Link>
       </div>
     </div>
   );

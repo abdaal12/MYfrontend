@@ -9,6 +9,7 @@ import Auth from "../pages/Auth";
 import Dashboard from "../pages/Dashboard";
 import UpdateProduct from '../components/UpdateProduct';
 import ProductDetail from "../components/ProductDetail";
+import ChatPage from "../pages/ChatPage";
 
 import SuperAdminDashboard from '../pages/SuperAdminDashboard';
 
@@ -26,7 +27,7 @@ const AppRoutes = () => {
       <Route path="/search" element={<SearchResults />} />
      <Route path="/auth" element={<Auth />} />
      <Route path="/product/:id" element={<ProductDetail />} />
-
+  <Route path="/chat" element={<ChatPage />} />
  {/* Private Routes */}
 
    <Route element={<PrivateRoute />}>
