@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ChatWindow from "../components/ChatWindow";
 import MessageInput from "../components/MessageInput";
 import axios from "axios";
+import MobileFooter from "../components/MobileFooter";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -43,6 +44,7 @@ const ChatPage = ({ receiverId }) => {
       <h5>Chat with Seller</h5>
       <ChatWindow messages={messages} userId={user._id} />
       <MessageInput onSend={handleSend} />
+      <MobileFooter/>
     </div>
   );
 };
