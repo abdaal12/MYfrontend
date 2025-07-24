@@ -66,7 +66,7 @@ const AddProduct = () => {
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => formData.append(key, value));
-      formData.append("image", imageFile); // ✅ Must match multer field name
+      formData.append("image",  selectedImageFile); // ✅ Must match multer field name
 
       const res = await axios.post(`${API}/products`, formData, {
         headers: {
