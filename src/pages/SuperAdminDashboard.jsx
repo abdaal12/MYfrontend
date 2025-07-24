@@ -7,7 +7,7 @@ const API = import.meta.env.VITE_API_URL;
 const SuperAdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+
 
   const token = localStorage.getItem("token");
   const config = {
@@ -25,12 +25,12 @@ const SuperAdminDashboard = () => {
       const [userRes, productRes, orderRes] = await Promise.all([
         axios.get(`${API}/admin/users`, config),
         axios.get(`${API}/admin/products`, config),
-        axios.get(`${API}/admin/orders`, config),
+      
       ]);
 
       setUsers(userRes.data);
       setProducts(productRes.data);
-      setOrders(orderRes.data);
+      
     } catch (error) {
       console.error("Error loading dashboard data:", error);
     }
@@ -114,38 +114,6 @@ const SuperAdminDashboard = () => {
         </table>
       </div>
 
-      {/* ORDERS SECTION */}
-      <div>
-        <h3>All Orders</h3>
-        <table className="table table-bordered table-hover">
-          <thead className="table-dark">
-            <tr>
-              <th>User</th>
-              <th>Products</th>
-              <th>Status</th>
-              <th>Total Price</th>
-              <th>Date/Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((o) => (
-              <tr key={o._id}>
-                <td>{o.user?.email}</td>
-                <td>
-                  {o.orderItems.map((item) => (
-                    <div key={item._id}>
-                      {item.name} (x{item.quantity})
-                    </div>
-                  ))}
-                </td>
-                <td>{o.status}</td>
-                <td>₹{o.totalPrice}</td>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
       <MobileFooter/>
     </div>
   );
