@@ -93,31 +93,41 @@ const ProductDetail = () => {
       </div>
 
       {/* Bottom Sticky Action Buttons */}
-     {/* Like and Share Buttons */}
-<div className="position-fixed bottom-0 start-0 end-0 bg-white border-top p-3 d-flex justify-content-around z-3">
-  <button className="btn btn-light w-25 d-flex align-items-center justify-content-center" onClick={async () => {
-    try {
-      const res = await axios.put(`${API}/products/like/${product._id}`);
-      setProduct({ ...product, likes: res.data.likes });
-    } catch (err) {
-      console.error("Like failed:", err);
-    }
-  }}>
-    ❤️ {product.likes || 0}
+ {/* Action Buttons - Like, Share, Contact Seller */}
+<div className="d-flex justify-content-around mt-4 px-2 gap-2">
+  <button
+    className="btn btn-outline-danger flex-grow-1"
+    onClick={async () => {
+      try {
+        const res = await axios.put(`${API}/products/like/${product._id}`);
+        setProduct({ ...product, likes: res.data.likes });
+      } catch (err) {
+        console.error("Like failed:", err);
+      }
+    }}
+  >
+    ❤️ Like ({product.likes || 0})
   </button>
 
-  <button className="btn btn-light w-25 d-flex align-items-center justify-content-center" onClick={() => {
-    const shareUrl = `${window.location.origin}/product/${product._id}`;
-    navigator.clipboard.writeText(shareUrl);
-    alert("Product link copied to clipboard!");
-  }}>
+  <button
+    className="btn btn-outline-secondary flex-grow-1"
+    onClick={() => {
+      const shareUrl = `${window.location.origin}/product/${product._id}`;
+      navigator.clipboard.writeText(shareUrl);
+      alert("Product link copied to clipboard!");
+    }}
+  >
     🔗 Share
   </button>
 
-  <button className="btn btn-outline-primary w-50" onClick={handleContactSeller}>
-    Contact Seller
+  <button
+    className="btn btn-outline-primary flex-grow-1"
+    onClick={handleContactSeller}
+  >
+    📞 Contact
   </button>
 </div>
+
 
       {/* Extra Space to Avoid Overlap */}
       <div style={{ height: "80px" }}></div>
