@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import ProductDetail from "../components/ProductDetail"
+import ProductCardMinimal from "../components/ProductCardMinimal";
 import { useNavigate } from 'react-router-dom';
 
 const LikedProducts = () => {
@@ -13,9 +13,9 @@ const LikedProducts = () => {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/users/liked`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setProducts(res.data);
+      setProducts(res.data.likedProducts || []); // Ensure it's an array
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching liked products:", err);
       navigate('/login');
     }
   };
@@ -26,13 +26,15 @@ const LikedProducts = () => {
 
   return (
     <div className="container mt-4">
-      <h3>Liked Products</h3>
+      <h3>❤️ Liked Products</h3>
       <div className="row">
-        {products.map(product => (
-          <div key={product._id} className="col-md-4 mb-3">
-            <ProductDetail product={product} />
-          </div>
-        ))}
+        {products.length === 0 ? (
+          <p className="text-muted mt-3">No liked products found.</p>
+        ) : (
+          products.map((product) => (
+            <ProductCardMinimal key={product._id} product={product} />
+          ))
+        )}
       </div>
     </div>
   );
