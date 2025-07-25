@@ -111,7 +111,7 @@ const Profile = () => {
 
         {/* Address */}
         <div>
-          <label>Address:</label>
+          <label>Address: </label>
           {editing ? (
             <textarea
               className="form-control mb-2"
