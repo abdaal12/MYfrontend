@@ -10,6 +10,7 @@ import Dashboard from "../pages/Dashboard";
 import UpdateProduct from '../components/UpdateProduct';
 import ProductDetail from "../components/ProductDetail";
 import ChatPage from "../pages/ChatPage";
+import LikedProducts from './pages/LikedProducts';
 
 import SuperAdminDashboard from '../pages/SuperAdminDashboard';
 
@@ -34,6 +35,7 @@ const AppRoutes = () => {
   
 <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
 
+      <Route path="/liked" element={<LikedProducts />} />
         <Route path="/profile" element={<Profile />} />
        <Route path="/dashboard" element={<Dashboard />} />
        <Route path="/update-product/:id" element={<UpdateProduct />} />

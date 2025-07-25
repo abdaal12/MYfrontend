@@ -23,9 +23,9 @@ const Navbar = () => {
     <nav className="bg-dark py-2">
       <div className="container d-flex align-items-center justify-content-between flex-nowrap gap-2">
         {/* Logo */}
-        <div className="text-white fw-bold" style={{ minWidth: "80px" }}>
-          MyShop
-        </div>
+       <Link to="/" className="text-white fw-bold text-decoration-none" style={{ minWidth: "80px" }}>
+  MyShop
+</Link>
 
         {/* Search Input */}
         <input

@@ -1,4 +1,5 @@
 import React from "react";
+import LazyLoad from "react-lazyload";
 import { useNavigate } from "react-router-dom";
 
 const backendUrl = import.meta.env.VITE_API_URL.replace("/api", "");
@@ -16,13 +17,14 @@ const ProductCardMinimal = ({ product }) => {
         className="card h-100 shadow-sm"
         style={{ cursor: "pointer" }}
         onClick={() => navigate(`/product/${product._id}`)}
-      >
+      ><LazyLoad>
         <img
           className="card-img-top"
           src={imageUrl}
           alt={product.name}
           style={{ height: "200px", objectFit: "cover" }}
         />
+        </LazyLoad>
         <div className="card-body text-center">
           <h6 className="card-title text-truncate">{product.name}</h6>
           <p className="mb-2 fw-bold text-success">₹{product.price}</p>

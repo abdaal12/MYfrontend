@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import MobileFooter from "../components/MobileFooter";
 
 
 const API = import.meta.env.VITE_API_URL;
@@ -139,8 +140,8 @@ const Profile = () => {
                 Edit Profile
               </button>
 
-              <button className="btn btn-primary" onClick={() => navigate("/orders")}>
-                Your Orders
+              <button className="btn btn-primary" onClick={() => navigate("/liked")}>
+                Liked Products
               </button>
 
               {(user.role === "admin" || user.role === "vendor") && user.role !== "superadmin" && (
@@ -165,7 +166,7 @@ const Profile = () => {
           )}
         </div>
       </div>
-      
+      <MobileFooter/>
     </div>
   );
 };
