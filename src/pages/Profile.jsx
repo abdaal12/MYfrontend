@@ -148,7 +148,7 @@ const Profile = () => {
                 <button className="btn btn-secondary" onClick={() => navigate("/dashboard")}>
                   Go to Dashboard
                 </button>
-              )}
+              
 
               {user.role === "superadmin" && (
                 <button className="btn btn-dark" onClick={() => navigate("/superadmin/dashboard")}>
