@@ -10,7 +10,7 @@ import Dashboard from "../pages/Dashboard";
 import UpdateProduct from '../components/UpdateProduct';
 import ProductDetail from "../components/ProductDetail";
 import ChatPage from "../pages/ChatPage";
-import LikedProducts from './pages/LikedProducts';
+import LikedProducts from '../pages/LikedProducts';
 
 import SuperAdminDashboard from '../pages/SuperAdminDashboard';
 
