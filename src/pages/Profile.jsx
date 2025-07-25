@@ -137,7 +137,7 @@ const Profile = () => {
           ) : (
             <>
               <button className="btn btn-warning" onClick={() => setEditing(true)}>
-                Edit Profile
+                Edit Profile 🛠️
               </button>
 
               <button className="btn btn-primary" onClick={() => navigate("/liked")}>

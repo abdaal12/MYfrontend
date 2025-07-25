@@ -51,7 +51,7 @@ const AddProduct = () => {
       });
 
       alert("Product created!");
-      console.log("Created Product:", response.data);
+      console.log(" Product Added 💖 :", response.data);
     } catch (error) {
       console.error("Product creation failed:", error);
       alert("Product creation failed");

@@ -174,7 +174,7 @@ const UpdateProduct = () => {
         )}
 
         <button type="submit" className="btn btn-primary w-100">
-          Update Product
+          Update Product 🛠️
         </button>
       </form>
     </div>
