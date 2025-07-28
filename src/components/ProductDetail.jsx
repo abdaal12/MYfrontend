@@ -14,12 +14,13 @@ const ProductDetail = () => {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [showContactOptions, setShowContactOptions] = useState(false);
 
-  const userId = localStorage.getItem("userId"); // Assuming you save it on login
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`${API}/products/${id}`);
+        console.log("Fetched product:", res.data); // DEBUG
         setProduct(res.data);
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -29,7 +30,8 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleContactSeller = () => {
-    setShowContactOptions(!showContactOptions);
+    setShowContactOptions((prev) => !prev);
+    console.log("Toggling contact dropdown:", !showContactOptions); // DEBUG
   };
 
   const handleStartChat = () => {
@@ -49,9 +51,13 @@ const ProductDetail = () => {
   const handleLike = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.put(`${API}/products/like/${product._id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.put(
+        `${API}/products/like/${product._id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setProduct({ ...product, likes: res.data.likes });
     } catch (err) {
       alert(err.response?.data?.message || "You can like only once.");
@@ -67,6 +73,10 @@ const ProductDetail = () => {
   if (!product) {
     return <p className="text-center mt-5">Loading product details...</p>;
   }
+
+  // DEBUG seller info
+  console.log("Seller ID:", product.sellerId);
+  console.log("Seller Phone:", product.sellerPhone);
 
   return (
     <div className="container-fluid px-2 px-md-5 pb-5">
@@ -115,8 +125,8 @@ const ProductDetail = () => {
         <p className="mt-3 text-dark">{product.description}</p>
       </div>
 
-      {/* Action Buttons - Like, Share, Contact */}
-      <div className="d-flex justify-content-around mt-4 px-2 gap-2 position-relative">
+      {/* Action Buttons */}
+      <div className="d-flex justify-content-around mt-4 px-2 gap-2 flex-wrap">
         <button className="btn btn-outline-danger flex-grow-1" onClick={handleLike}>
           ❤️ Like ({product.likes || 0})
         </button>
@@ -128,7 +138,8 @@ const ProductDetail = () => {
           🔗 Share
         </button>
 
-        <div className="flex-grow-1">
+        {/* Contact Button and Dropdown */}
+        <div className="flex-grow-1 w-100 w-md-auto">
           <button
             className="btn btn-outline-primary w-100"
             onClick={handleContactSeller}
@@ -136,9 +147,8 @@ const ProductDetail = () => {
             📞 Contact
           </button>
 
-          {/* Contact Options Dropdown */}
           {showContactOptions && (
-            <div className="bg-light border rounded mt-2 p-2 shadow-sm text-center">
+            <div className="bg-light border rounded mt-2 p-2 shadow-sm text-center w-100">
               {product.sellerId && (
                 <button
                   className="btn btn-sm btn-outline-primary w-100 mb-2"
@@ -157,19 +167,22 @@ const ProductDetail = () => {
                   📱 WhatsApp
                 </a>
               )}
+              {!product.sellerId && !product.sellerPhone && (
+                <p className="text-muted small">Contact info not available</p>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Social Share Options */}
+      {/* Share Section */}
       {showShareOptions && (
         <div className="mt-3 p-3 border rounded bg-light text-center">
           <h6 className="mb-3">📱 Share to:</h6>
           <div className="d-flex justify-content-around flex-wrap gap-2">
             <a
               href={`https://wa.me/?text=${encodeURIComponent(
-                `${product.name} - ${window.location.origin}/product/${product._id}`
+                `${product.name} - ${window.location.origin}/products/${product._id}`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -179,7 +192,7 @@ const ProductDetail = () => {
             </a>
             <a
               href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                `${window.location.origin}/product/${product._id}`
+                `${window.location.origin}/products/${product._id}`
               )}&text=${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -189,7 +202,7 @@ const ProductDetail = () => {
             </a>
             <a
               href={`https://t.me/share/url?url=${encodeURIComponent(
-                `${window.location.origin}/product/${product._id}`
+                `${window.location.origin}/products/${product._id}`
               )}&text=${encodeURIComponent(product.name)}`}
               target="_blank"
               rel="noopener noreferrer"
