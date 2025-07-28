@@ -31,7 +31,11 @@ const ProductDetail = () => {
 
   const handleContactSeller = () => {
     setShowContactOptions((prev) => !prev);
+<<<<<<< HEAD
     console.log("Toggling contact dropdown:", !showContactOptions); // DEBUG
+=======
+    console.log("Contact toggled:", !showContactOptions);
+>>>>>>> 6a234b294e30f4762a9b3b0c6edcd1579c3b8655
   };
 
   const handleStartChat = () => {
@@ -126,7 +130,11 @@ const ProductDetail = () => {
       </div>
 
       {/* Action Buttons */}
+<<<<<<< HEAD
       <div className="d-flex justify-content-around mt-4 px-2 gap-2 flex-wrap">
+=======
+      <div className="d-flex justify-content-around mt-4 px-2 gap-2">
+>>>>>>> 6a234b294e30f4762a9b3b0c6edcd1579c3b8655
         <button className="btn btn-outline-danger flex-grow-1" onClick={handleLike}>
           ❤️ Like ({product.likes || 0})
         </button>
@@ -139,7 +147,11 @@ const ProductDetail = () => {
         </button>
 
         {/* Contact Button and Dropdown */}
+<<<<<<< HEAD
         <div className="flex-grow-1 w-100 w-md-auto">
+=======
+        <div className="flex-grow-1 position-relative">
+>>>>>>> 6a234b294e30f4762a9b3b0c6edcd1579c3b8655
           <button
             className="btn btn-outline-primary w-100"
             onClick={handleContactSeller}
@@ -148,7 +160,14 @@ const ProductDetail = () => {
           </button>
 
           {showContactOptions && (
+<<<<<<< HEAD
             <div className="bg-light border rounded mt-2 p-2 shadow-sm text-center w-100">
+=======
+            <div
+              className="bg-light border rounded mt-2 p-2 shadow-sm text-center position-absolute w-100"
+              style={{ zIndex: 100 }}
+            >
+>>>>>>> 6a234b294e30f4762a9b3b0c6edcd1579c3b8655
               {product.sellerId && (
                 <button
                   className="btn btn-sm btn-outline-primary w-100 mb-2"
