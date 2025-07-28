@@ -6,43 +6,99 @@ import ChatWindow from "../components/ChatWindow";
 import ChatInput from "../components/ChatInput";
 
 const ChatPage = () => {
-  const { otherUserId } = useParams(); // from route `/chat/:otherUserId`
-  const userId = localStorage.getItem("userId"); // adjust based on your auth
-  const roomId = [userId, otherUserId].sort().join("_");
-
+  const { otherUserId } = useParams(); // From URL like /chat/:otherUserId
+  const userId = localStorage.getItem("userId"); // from auth
+  const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
 
+  // 1. First - Access or Create Chat between user and otherUser
   useEffect(() => {
-    socket.connect();
-    socket.emit("joinRoom", roomId);
+    const createOrGetChat = async () => {
+      try {
+        const { data } = await axios.post(
+          "/chat",
+          { userId: otherUserId }, // this is the receiver
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setChatId(data._id);
 
+        // 2. Join the socket room
+        socket.connect();
+        socket.emit("joinRoom", data._id);
+      } catch (error) {
+        console.error("Failed to get or create chat:", error);
+      }
+    };
+
+    createOrGetChat();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [otherUserId]);
+
+  // 3. Fetch previous messages
+  useEffect(() => {
+    if (!chatId) return;
+
+    const fetchMessages = async () => {
+      try {
+        const { data } = await axios.get(`/message/${chatId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setMessages(data);
+      } catch (error) {
+        console.error("Failed to load messages:", error);
+      }
+    };
+
+    fetchMessages();
+  }, [chatId]);
+
+  // 4. Listen for incoming messages via socket
+  useEffect(() => {
     socket.on("receiveMessage", (message) => {
       setMessages((prev) => [...prev, message]);
     });
 
     return () => {
       socket.off("receiveMessage");
-      socket.disconnect();
     };
-  }, [roomId]);
+  }, []);
 
-  useEffect(() => {
-    // Load previous messages
-    axios.get(`/api/chat/room/${roomId}`).then((res) => {
-      setMessages(res.data.messages);
-    });
-  }, [roomId]);
+  const handleSend = async (text) => {
+    const message = {
+      sender: userId,
+      text,
+      timestamp: new Date(),
+    };
 
-  const handleSend = (text) => {
-    const message = { sender: userId, text, timestamp: new Date() };
-    socket.emit("sendMessage", { roomId, message });
-    setMessages((prev) => [...prev, message]);
+    try {
+      socket.emit("sendMessage", { roomId: chatId, message });
+      setMessages((prev) => [...prev, message]);
 
-    // Save to DB too
-    axios.post(`/api/chat/message`, {
-      roomId,
-      message,
-    });
+      // Save to DB
+      await axios.post(
+        "/message",
+        {
+          chatId,
+          content: text,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
   };
 
   return (
