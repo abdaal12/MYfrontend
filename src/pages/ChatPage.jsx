@@ -103,6 +103,7 @@ const ChatPage = () => {
 
   return (
     <div className="container mt-3">
+      <h2>Your Chats</h2>
       <ChatWindow messages={messages} userId={userId} />
       <ChatInput onSend={handleSend} />
     </div>

@@ -33,19 +33,21 @@ const ProductDetail = () => {
     setShowContactOptions((prev) => !prev);
     console.log("Toggling contact dropdown:", !showContactOptions); // DEBUG
   };
-
   const handleStartChat = () => {
-    if (!userId || !product?.sellerId) return;
-    if (userId === product.sellerId) {
+    const sellerId = product?.seller?._id;
+
+    if (!userId || !sellerId) return;
+    if (userId === sellerId) {
       alert("This is your own product.");
       return;
     }
-    navigate(`/chat/${product.sellerId}`);
+    navigate(`/chat/${sellerId}`);
   };
-
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
-    return imagePath.startsWith("http") ? imagePath : `${backendUrl}${imagePath}`;
+    return imagePath.startsWith("http")
+      ? imagePath
+      : `${backendUrl}${imagePath}`;
   };
 
   const handleLike = async () => {
@@ -86,7 +88,11 @@ const ProductDetail = () => {
           className="img-fluid w-100"
           src={getImageUrl(product.image)}
           alt={product.name}
-          style={{ maxHeight: "400px", objectFit: "contain", cursor: "zoom-in" }}
+          style={{
+            maxHeight: "400px",
+            objectFit: "contain",
+            cursor: "zoom-in",
+          }}
           onClick={() => setShowModal(true)}
         />
       </div>
@@ -127,7 +133,10 @@ const ProductDetail = () => {
 
       {/* Action Buttons */}
       <div className="d-flex justify-content-around mt-4 px-2 gap-2 flex-wrap">
-        <button className="btn btn-outline-danger flex-grow-1" onClick={handleLike}>
+        <button
+          className="btn btn-outline-danger flex-grow-1"
+          onClick={handleLike}
+        >
           ❤️ Like ({product.likes || 0})
         </button>
 
@@ -149,7 +158,7 @@ const ProductDetail = () => {
 
           {showContactOptions && (
             <div className="bg-light border rounded mt-2 p-2 shadow-sm text-center w-100">
-              {product.sellerId && (
+              {product.seller?._id && (
                 <button
                   className="btn btn-sm btn-outline-primary w-100 mb-2"
                   onClick={handleStartChat}
@@ -157,9 +166,9 @@ const ProductDetail = () => {
                   💬 Chat with Owner
                 </button>
               )}
-              {product.sellerPhone && (
+              {product.seller?.phone && (
                 <a
-                  href={`https://wa.me/${product.sellerPhone}`}
+                  href={`https://wa.me/${product.seller.phone}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-sm btn-success w-100"
@@ -167,6 +176,7 @@ const ProductDetail = () => {
                   📱 WhatsApp
                 </a>
               )}
+
               {!product.sellerId && !product.sellerPhone && (
                 <p className="text-muted small">Contact info not available</p>
               )}
