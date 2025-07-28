@@ -9,7 +9,7 @@ const Dashboard = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center mb-3">Vendor / Admin Dashboard</h2>
+      <h2 className="text-center mb-3">Your Dashboard>
 
       <div className="d-flex justify-content-center gap-2 mb-4 flex-wrap">
         <button className="btn btn-outline-primary" onClick={() => setSection("products")}>My Products</button>

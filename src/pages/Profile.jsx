@@ -144,11 +144,11 @@ const Profile = () => {
                 Liked Products
               </button>
 
-              {(user.role === "admin" || user.role === "vendor") && user.role !== "superadmin" && (
+            
                 <button className="btn btn-secondary" onClick={() => navigate("/dashboard")}>
                   Go to Dashboard
                 </button>
-              )}
+              
 
               {user.role === "superadmin" && (
                 <button className="btn btn-dark" onClick={() => navigate("/superadmin/dashboard")}>
