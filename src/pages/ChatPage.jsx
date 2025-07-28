@@ -1,64 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import socket from "../socket";
 import axios from "axios";
-import ChatBubble from "../components/ChatBubble";
+import ChatWindow from "../components/ChatWindow";
 import ChatInput from "../components/ChatInput";
 
-const API = import.meta.env.VITE_API_URL;
-
 const ChatPage = () => {
-  const { chatId } = useParams();
+  const { otherUserId } = useParams(); // from route `/chat/:otherUserId`
+  const userId = localStorage.getItem("userId"); // adjust based on your auth
+  const roomId = [userId, otherUserId].sort().join("_");
+
   const [messages, setMessages] = useState([]);
-  const [recipientName, setRecipientName] = useState("");
-  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const fetchChat = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        const res = await axios.get(`${API}/chat/${chatId}`, config);
-        setMessages(res.data.messages);
-        setRecipientName(res.data.participantName);
-        setUserId(res.data.currentUserId); // for detecting own message
-      } catch (error) {
-        console.error("Fetch chat error:", error);
-      }
+    socket.connect();
+    socket.emit("joinRoom", roomId);
+
+    socket.on("receiveMessage", (message) => {
+      setMessages((prev) => [...prev, message]);
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+      socket.disconnect();
     };
+  }, [roomId]);
 
-    fetchChat();
-  }, [chatId]);
+  useEffect(() => {
+    // Load previous messages
+    axios.get(`/api/chat/room/${roomId}`).then((res) => {
+      setMessages(res.data.messages);
+    });
+  }, [roomId]);
 
-  const handleSend = async (messageText) => {
-    try {
-      const token = localStorage.getItem("token");
-      const config = { headers: { Authorization: `Bearer ${token}` } };
+  const handleSend = (text) => {
+    const message = { sender: userId, text, timestamp: new Date() };
+    socket.emit("sendMessage", { roomId, message });
+    setMessages((prev) => [...prev, message]);
 
-      const res = await axios.post(`${API}/chat/${chatId}/message`, {
-        content: messageText,
-      }, config);
-
-      setMessages((prev) => [...prev, res.data]);
-    } catch (error) {
-      console.error("Send message error:", error);
-    }
+    // Save to DB too
+    axios.post(`/api/chat/message`, {
+      roomId,
+      message,
+    });
   };
 
   return (
-    <div className="container py-3">
-      <div className="card">
-        <div className="card-header bg-primary text-white fw-bold">
-          Chat with {recipientName}
-        </div>
-
-        <div className="card-body" style={{ height: "60vh", overflowY: "auto" }}>
-          {messages.map((msg, idx) => (
-            <ChatBubble key={idx} message={msg} isOwn={msg.sender === userId} />
-          ))}
-        </div>
-
-        <ChatInput onSend={handleSend} />
-      </div>
+    <div className="container mt-3">
+      <ChatWindow messages={messages} userId={userId} />
+      <ChatInput onSend={handleSend} />
     </div>
   );
 };

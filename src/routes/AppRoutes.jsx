@@ -28,7 +28,7 @@ const AppRoutes = () => {
       <Route path="/search" element={<SearchResults />} />
      <Route path="/auth" element={<Auth />} />
      <Route path="/product/:id" element={<ProductDetail />} />
-  <Route path="/chat" element={<ChatPage />} />
+  <Route path="/chat/:otherUserId" element={<ChatPage />} />
  {/* Private Routes */}
 
    <Route element={<PrivateRoute />}>

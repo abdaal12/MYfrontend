@@ -12,7 +12,9 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
-  const [showContactOptions, setShowContactOptions] = useState(false); // 🆕 added
+  const [showContactOptions, setShowContactOptions] = useState(false);
+
+  const userId = localStorage.getItem("userId"); // Assuming you save it on login
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,14 +29,21 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleContactSeller = () => {
-    setShowContactOptions(!showContactOptions); // 🆕 toggle contact options
+    setShowContactOptions(!showContactOptions);
+  };
+
+  const handleStartChat = () => {
+    if (!userId || !product?.sellerId) return;
+    if (userId === product.sellerId) {
+      alert("This is your own product.");
+      return;
+    }
+    navigate(`/chat/${product.sellerId}`);
   };
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
-    return imagePath.startsWith("http")
-      ? imagePath
-      : `${backendUrl}${imagePath}`;
+    return imagePath.startsWith("http") ? imagePath : `${backendUrl}${imagePath}`;
   };
 
   const handleLike = async () => {
@@ -130,20 +139,24 @@ const ProductDetail = () => {
           {/* Contact Options Dropdown */}
           {showContactOptions && (
             <div className="bg-light border rounded mt-2 p-2 shadow-sm text-center">
-              <button
-                className="btn btn-sm btn-outline-primary w-100 mb-2"
-                onClick={() => navigate(`/chat/${product.sellerId}`)}
-              >
-                💬 Chat with Owner
-              </button>
-              <a
-                href={`https://wa.me/${product.sellerPhone || ""}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-sm btn-success w-100"
-              >
-                📱 WhatsApp
-              </a>
+              {product.sellerId && (
+                <button
+                  className="btn btn-sm btn-outline-primary w-100 mb-2"
+                  onClick={handleStartChat}
+                >
+                  💬 Chat with Owner
+                </button>
+              )}
+              {product.sellerPhone && (
+                <a
+                  href={`https://wa.me/${product.sellerPhone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm btn-success w-100"
+                >
+                  📱 WhatsApp
+                </a>
+              )}
             </div>
           )}
         </div>

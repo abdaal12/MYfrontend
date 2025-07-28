@@ -1,39 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
-
-const ChatList = () => {
+const ChatList = ({ userId }) => {
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const { data } = await axios.get(`${API}/chat`);
-        setChats(data);
-      } catch (error) {
-        console.error("Error fetching chat list:", error);
+        const res = await axios.get(`/api/chat/user/${userId}`);
+        setChats(res.data);
+      } catch (err) {
+        console.error("Failed to load chat list:", err);
       }
     };
-
     fetchChats();
-  }, []);
+  }, [userId]);
 
   return (
-    <div className="container py-3">
-      <h4 className="mb-3">Your Conversations</h4>
+    <div className="border p-3 mb-4">
+      <h5>Chats</h5>
       <ul className="list-group">
-        {chats.map((chat) => (
-          <Link
-            to={`/chat/${chat._id}`}
-            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-            key={chat._id}
-          >
-            <div>{chat.participantName}</div>
-            <small className="text-muted">{chat.lastMessageTime}</small>
-          </Link>
-        ))}
+        {chats.map((chat) => {
+          const otherUser = chat.members.find((id) => id !== userId);
+          return (
+            <Link to={`/chat/${otherUser}`} key={chat._id} className="list-group-item">
+              Chat with {otherUser}
+            </Link>
+          );
+        })}
       </ul>
     </div>
   );

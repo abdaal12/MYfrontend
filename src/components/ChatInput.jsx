@@ -1,28 +1,27 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const ChatInput = ({ onSend }) => {
-  const [newMessage, setNewMessage] = useState("");
+  const [text, setText] = useState("");
 
-  const handleSend = () => {
-    if (!newMessage.trim()) return;
-    onSend(newMessage);
-    setNewMessage("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (text.trim()) {
+      onSend(text);
+      setText("");
+    }
   };
 
   return (
-    <div className="d-flex p-2 border-top">
+    <form onSubmit={handleSubmit} className="d-flex mt-2">
       <input
-        type="text"
         className="form-control me-2"
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
         placeholder="Type a message..."
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSend()}
       />
-      <button className="btn btn-primary" onClick={handleSend}>
-        Send
-      </button>
-    </div>
+      <button className="btn btn-primary" type="submit">Send</button>
+    </form>
   );
 };
 
